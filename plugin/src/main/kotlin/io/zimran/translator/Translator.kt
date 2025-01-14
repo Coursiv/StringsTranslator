@@ -1,4 +1,5 @@
 package io.zimran.translator
+
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.post
@@ -28,12 +29,14 @@ fun translate(openAiToken: String, projectDir: File) = runBlocking {
         locales.forEach { toLocale ->
             launch {
                 val toLocaleData = collectStringsXmlData(file.name, toLocale)
-                val translationCandidates = createListOfTranslationCandidates(original, toLocaleData)
+                val translationCandidates =
+                    createListOfTranslationCandidates(original, toLocaleData)
                 if (translationCandidates.isEmpty()) {
                     return@launch
                 }
                 val originalStringsData = translationCandidates.joinToString(separator = "\n")
-                val translatedStringsData = makeTranslateRequest(originalStringsData, toLocale = toLocale)
+                val translatedStringsData =
+                    makeTranslateRequest(originalStringsData, toLocale = toLocale)
                 appendTranslatedStrings(
                     fileName = file.name,
                     translatedStringsData = translatedStringsData,
@@ -69,7 +72,10 @@ fun findStringXmlFiles(): List<File> {
 
     // Filter XML files containing "strings" in their name
     return valuesFolder.listFiles { file ->
-        file.isFile && file.name.contains("strings", ignoreCase = true) && file.name.endsWith(".xml", ignoreCase = true)
+        file.isFile && file.name.contains(
+            "strings",
+            ignoreCase = true
+        ) && file.name.endsWith(".xml", ignoreCase = true)
     }?.toList() ?: emptyList()
 }
 
@@ -137,7 +143,11 @@ private fun createListOfTranslationCandidates(
     return result
 }
 
-private fun appendTranslatedStrings(fileName: String, translatedStringsData: String, locale: String? = null) {
+private fun appendTranslatedStrings(
+    fileName: String,
+    translatedStringsData: String,
+    locale: String? = null
+) {
     val localeSuffix = if (locale != null) "-$locale" else ""
     val localeValuesFolder = File(resDir, "values$localeSuffix")
     if (!localeValuesFolder.exists()) {
@@ -146,6 +156,8 @@ private fun appendTranslatedStrings(fileName: String, translatedStringsData: Str
     val stringsFile = File(localeValuesFolder, fileName)
     var data = stringsFile.readText()
     val tabbedTranslations = translatedStringsData.replace("<string", "\t<string")
-    data = data.replace("</resources>", "$tabbedTranslations\n</resources>")
+    data = data
+        .replace("</resources>", "$tabbedTranslations\n</resources>")
+        .replace("'", "’")
     stringsFile.writeText(data)
 }
