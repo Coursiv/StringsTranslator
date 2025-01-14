@@ -23,7 +23,7 @@ dependencies {
 gradlePlugin {
     // Define the plugin
     val greeting by plugins.creating {
-        id = "io.zimran.translator"
+        id = "io.zimran.strings-translator"
         implementationClass = "io.zimran.translator.TranslatorPlugin"
     }
 }

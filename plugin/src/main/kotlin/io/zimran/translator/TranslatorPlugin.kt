@@ -11,7 +11,7 @@ import java.util.Properties
 class TranslatorPlugin : Plugin<Project> {
     override fun apply(project: Project) {
 
-        project.tasks.register("translateResources") { task ->
+        project.tasks.register("translateStringResources") { task ->
             task.group = "zimran"
             task.doLast {
 
