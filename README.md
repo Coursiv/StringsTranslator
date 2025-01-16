@@ -65,5 +65,10 @@ Here are some planned enhancements for StringsTranslator:
    Enable translation for string resources in all modules by:
    - Iterating through all folders containing `build.gradle.kts` files.
    - Identifying and processing their `res` folders for translation.
+     
+3. **Indonesian locale**
+   Take into account that "in" locale is treated as Hindi by ChatGPT and should be replaced with "id". Or provide some other solution that resolves this
+
+4. **Plurals support**
 
 
