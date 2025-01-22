@@ -86,7 +86,7 @@ private suspend fun makeTranslateRequest(originalStringsData: String, toLocale: 
             Message(role = "developer", content = "You are a helpful assistant."),
             Message(
                 role = "user",
-                content = "Provide translation for the following strings.xml to locale of $toLocale. " +
+                content = "Provide translation for the following strings.xml to locale of \"$toLocale\". " +
                         "Do not decorate the reply message with any additional text, just return the translation please\n" +
                         "And don't wrap them in a ```xml please" +
                         originalStringsData
