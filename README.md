@@ -10,7 +10,7 @@ Follow these steps to integrate StringsTranslator into your project:
    Open your project repository in the terminal and run the following commands:
    ```bash
    git submodule init
-   git submodule add https://github.com/Coursiv/ResourceTranslator.git
+   git submodule add https://github.com/Coursiv/StringsTranslator.git
    ```
 
 2. **Modify `settings.gradle.kts`**
