@@ -58,17 +58,17 @@ When cloning the parent project to a new machine or updating StringsTranslator:
 
 Here are some planned enhancements for StringsTranslator:
 
-1. **Support for Translating `string-arrays`**
-   Extend functionality to handle `string-array` resources.
+1. ~~**Support for Translating `string-arrays`**~~ – Done ✅
+   </br>Extend functionality to handle `string-array` resources.
 
 2. **Multi-Module Support**
    Enable translation for string resources in all modules by:
    - Iterating through all folders containing `build.gradle.kts` files.
    - Identifying and processing their `res` folders for translation.
      
-3. **Indonesian locale**
-   Take into account that "in" locale is treated as Hindi by ChatGPT and should be replaced with "id". Or provide some other solution that resolves this
+3. ~~**Indonesian locale**~~ – Done ✅
+   </br>Take into account that "in" locale is treated as Hindi by ChatGPT and should be replaced with "id". Or provide some other solution that resolves this
 
-4. **Plurals support**
+4. ~~**Plurals support**~~ – Done ✅
 
 
