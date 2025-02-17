@@ -117,7 +117,11 @@ fun collectStringsXmlData(fileName: String, locale: String? = null): Map<String,
 
 fun getKeyAndStringsMap(data: String): Map<String, String> {
     val stringResRegex = Regex("<string name=(\".+\")>(.+)</string>")
-    val arrayResRegex = Regex("<string-array\\s+name=\"([^\"]+)\">\\s*(<item>(.*?)</item>\\s*)+</string-array>")
+    val arrayResRegex =
+        Regex("<string-array\\s+name=\"([^\"]+)\">\\s*(<item>(.*?)</item>\\s*)+</string-array>")
+    val pluralResRegex =
+        Regex("<plurals\\s+name=\"([^\"]+)\">\\s*(<item\\s+quantity=\"([^\"]+)\">(.*?)</item>\\s*)+</plurals>")
+
     val result = HashMap<String, String>()
 
     stringResRegex.findAll(data).forEach {
@@ -135,6 +139,14 @@ fun getKeyAndStringsMap(data: String): Map<String, String> {
             return@forEach
         }
 
+        result[key] = value
+    }
+    pluralResRegex.findAll(data).forEach {
+        val key = it.groups[1]?.value ?: return@forEach
+        val value = it.groupValues[0]
+        if (key.contains("translatable=\"false\"")) {
+            return@forEach
+        }
         result[key] = value
     }
     return result
@@ -165,7 +177,11 @@ private fun appendTranslatedStrings(
     }
     val stringsFile = File(localeValuesFolder, fileName)
     var data = stringsFile.readText()
-    val tabbedTranslations = translatedStringsData.replace("<string", "\t<string")
+    val tabbedTranslations = translatedStringsData
+        .replace(Regex("^<"), "\t<")
+        .replace(Regex("\n<"), "\n\t<")
+        .replace("<item", "\t<item")
+
     data = data
         .replace("</resources>", "$tabbedTranslations\n</resources>")
         .replace("'", "’")
