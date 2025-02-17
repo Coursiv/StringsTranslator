@@ -117,6 +117,7 @@ fun collectStringsXmlData(fileName: String, locale: String? = null): Map<String,
 
 fun getKeyAndStringsMap(data: String): Map<String, String> {
     val stringResRegex = Regex("<string name=(\".+\")>(.+)</string>")
+    val arrayResRegex = Regex("<string-array\\s+name=\"([^\"]+)\">\\s*(<item>(.*?)</item>\\s*)+</string-array>")
     val result = HashMap<String, String>()
 
     stringResRegex.findAll(data).forEach {
@@ -125,6 +126,15 @@ fun getKeyAndStringsMap(data: String): Map<String, String> {
         if (key.contains("translatable=\"false\"")) {
             return@forEach
         }
+        result[key] = value
+    }
+    arrayResRegex.findAll(data).forEach {
+        val key = it.groups[1]?.value ?: return@forEach
+        val value = it.groupValues[0]
+        if (key.contains("translatable=\"false\"")) {
+            return@forEach
+        }
+
         result[key] = value
     }
     return result
