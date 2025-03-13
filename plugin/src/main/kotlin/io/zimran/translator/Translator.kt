@@ -109,7 +109,6 @@ fun findStringXmlFiles(): List<File> {
 }
 
 private suspend fun makeTranslateRequest(originalStringsData: String, toLocale: String): String {
-    println(MESSAGE_SYSTEM)
     val chatGPTRequest = ChatGPTRequest(
         model = "gpt-4o-mini",
         messages = listOf(
