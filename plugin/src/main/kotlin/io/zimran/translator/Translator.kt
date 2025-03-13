@@ -15,6 +15,35 @@ private lateinit var ktorClient: HttpClient
 private lateinit var resDir: File
 private lateinit var appGradle: File
 private const val ENDPOINT = "https://api.openai.com/v1/chat/completions"
+private const val MESSAGE_SYSTEM = """
+YOU ARE AN ELITE, CONTEXT-AWARE ENGLISH TO {locale} TRANSLATOR, SPECIALIZING IN UI/UX TEXTS FOR ANDROID MOBILE APPLICATIONS.
+
+### INSTRUCTIONS
+1. **Translation Quality**
+   - Translate text accurately and naturally into **{locale}**, fully preserving context and intent.
+   - Ensure the tone is  **user-friendly, clear, straightforward, and respectful**, aligning with mobile UI/UX best practices.
+   - ADAPT idioms and phrasal verbs minding cultural nuances and local expressions.
+   - MIND the context. Check the word's surroundings and PRESERVE figurative language, i.e. words and expressions that are not in their literal, direct meaning. Pay special attention to how users will encounter these texts in a mobile setting—e.g., short prompts, button labels, notifications.
+   - PRESERVE technical terms such as "prompt", "prompt engineering".
+
+2. **UI/UX Terminology**
+   - Localize UI-specific terms (e.g., "Confirm", "Cancel", "Menu") to equivalent expressions used in **{locale}**-speaking mobile applications.
+   - Ensure the translation is succinct, intuitive, and consistent with standard UI/UX conventions in the target region.
+   - Adapt educational terms and instructions to equivalent expressions used in **{locale}-speaking academic settings**.
+   
+3. **Non-Translatable Elements**
+   - **DO NOT TRANSLATE**:
+     - Android string.xml placeholders (e.g., %s, %d, \n)
+     - Links or URLs
+     - HTML tags (e.g., `<span>`, `<div>`)
+     - Markdown tags (e.g., **, ~~)
+   - Keep these elements **exactly as they are**.
+   
+4. **Final Requirement**
+   - Do not decorate the reply message with any additional text.
+   - Always return only the translation.
+   - Do not wrap them in a ```xml
+"""
 
 fun translate(openAiToken: String, projectDir: File) = runBlocking {
     resDir = File(projectDir, "app/src/main/res")
@@ -80,15 +109,14 @@ fun findStringXmlFiles(): List<File> {
 }
 
 private suspend fun makeTranslateRequest(originalStringsData: String, toLocale: String): String {
+    println(MESSAGE_SYSTEM)
     val chatGPTRequest = ChatGPTRequest(
         model = "gpt-4o-mini",
         messages = listOf(
-            Message(role = "developer", content = "You are a helpful assistant."),
+            Message(role = "system", content = MESSAGE_SYSTEM.replace("{locale}", toLocale)),
             Message(
                 role = "user",
-                content = "Provide translation for the following strings.xml to locale of \"$toLocale\". " +
-                        "Do not decorate the reply message with any additional text, just return the translation please\n" +
-                        "And don't wrap them in a ```xml please" +
+                content = "Provide translation for the following strings.xml to locale of \"$toLocale\".\n" +
                         originalStringsData
             )
         ),
@@ -168,7 +196,7 @@ private fun createListOfTranslationCandidates(
 private fun appendTranslatedStrings(
     fileName: String,
     translatedStringsData: String,
-    locale: String? = null
+    locale: String? = null,
 ) {
     val localeSuffix = if (locale != null) "-$locale" else ""
     val localeValuesFolder = File(resDir, "values$localeSuffix")
